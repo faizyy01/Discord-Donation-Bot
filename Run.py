@@ -5,6 +5,8 @@ from discord.utils import get
 import asyncio
 import json
 
+status = 1
+
 def openf(name):
     path = os.getcwd() + f"{name}"
     with open(path, "r") as f:
@@ -13,7 +15,9 @@ def openf(name):
 
 data = openf("/settings.json")
 TOKEN = data["token"]
-bot = commands.Bot(command_prefix=".")
+intents = discord.Intents.default()
+intents.members = True
+bot = commands.Bot(command_prefix=".", intents = intents)
 bot.remove_command('help')
 
 
@@ -64,9 +68,9 @@ async def closestore(ctx):
 async def on_message(message):
     if message.author.id == bot.user.id:
         return
-    if message.author.guild_permissions.administrator:
-        await bot.process_commands(message)
-        return
+    #if message.author.guild_permissions.administrator:
+        #await bot.process_commands(message)
+        #return
     if not message.guild:
         return
     if status == 0:
