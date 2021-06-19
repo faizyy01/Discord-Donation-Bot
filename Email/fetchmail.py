@@ -7,20 +7,20 @@ import json
 import os 
 
 def openf(name):
-    path = os.getcwd() + f"/Cogs/Json/{name}"
+    path = os.getcwd() + f"{name}"
     with open(path, "r") as f:
         data = json.load(f)
     return data
 
 def savef(name, data):
-    path = os.getcwd() + f"/Cogs/Json/{name}"
+    path = os.getcwd() + f"{name}"
     with open(path, "w") as f:
         json.dump(data, f, indent=4, default=str)
 
 
 def fetchmail():
     try:
-        data = openf("info.json")
+        data = openf("settings.json")
         user = data["user"]
         password = data["password"]
         imap_url = data["imap_url"]
