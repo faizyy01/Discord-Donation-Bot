@@ -11,8 +11,6 @@ import Cogs.Json.jshelper as jshelper
 from discord.ext.commands.cooldowns import BucketType
 
 t = BucketType.user
-cashappaddy = "Cashapp: $"
-paypaladdy = "Venmo: @"
 rate = 1
 per = 2
 
@@ -43,8 +41,8 @@ class app(commands.Cog):
     async def on_ready(self):
         data = jshelper.openf("settings.json")
         self.price = data["Price"]
-        self.ca = cashappaddy + data["cashapp"]
-        self.vm = paypaladdy + data["venmo"]
+        self.ca = cashappaddy + "Cashapp: $"
+        self.vm = paypaladdy + "Venmo: @"
         self.note = data["note"]
         # self.change_status.start()
     
