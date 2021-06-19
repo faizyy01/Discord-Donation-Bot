@@ -41,8 +41,8 @@ class app(commands.Cog):
     async def on_ready(self):
         data = jshelper.openf("/settings.json")
         self.price = data["Price"]
-        self.ca = cashappaddy + "Cashapp: $"
-        self.vm = paypaladdy + "Venmo: @"
+        self.ca = f'Cashapp: ${data["cashapp"]}'
+        self.vm = f'Venmo: @{data["venmo"]}'
         self.note = data["note"]
         # self.change_status.start()
     
