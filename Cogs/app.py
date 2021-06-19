@@ -78,13 +78,15 @@ class app(commands.Cog):
     @commands.cooldown(rate, per, t)
     @commands.command(ignore_extra=False)
     async def buy(self, ctx):
-        recs = ['❌','1️⃣','2️⃣']
+        one  = '1️⃣'
+        two = '2️⃣'
+        nay = '❌'
+        tick = '✅'
+        recs = [one,two,nay,tick]
         def check(reaction, user):
             return user == ctx.author and str(reaction.emoji) in recs
-    
         price = self.price
         if jshelper.checkopen(int(ctx.author.id)):
-            nay = '❌'
             embed = discord.Embed(color=0xf50000)
             embed.add_field(name=f"ERROR",
                             value=f"Please Finish your existing order before opening a new one. \nOr press {nay} button to cancel your previous order.")
@@ -96,9 +98,6 @@ class app(commands.Cog):
                 await ctx.author.send("Timed out.")
             else:
                 await self.cancel(ctx)
-
-        one  = '1️⃣'
-        two = '2️⃣'
         embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to pay with Cashapp.\nClick {two} to pay with Venmo.\nThis menu will time out in 1 minute.',color=0x800080)
         msg = await ctx.author.send(embed=embed)
         await msg.add_reaction(one)
@@ -122,17 +121,27 @@ class app(commands.Cog):
             jshelper.makeopen(ctx.author.id)
             
             embed = discord.Embed(title=f'Payment via {payment}',color=0xf50000)
-            embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}",
-                            value=f"Make sure you send the exact amount with the note.\nThis Order will auto-cancel in 30 mins.\nBot takes upto 5 mins to process after payment.")
-            await ctx.author.send(embed=embed)
+            embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}\nMake sure you send the exact amount with the NOTE.",
+                            value=f"This page will timeout in 30 mins.\nClick {tick} once you have sent the payment.")
+            msg = await ctx.author.send(embed=embed)
             await ctx.author.send(note)
-            checkifright = await checkmail(price, number)
-            if checkifright:
-                await ctx.author.send(f"{ctx.author.mention} Thank You! Payment recieved.")
+            await msg.add_reaction(tick)
+            try:
+                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=1800.0, check=check)
+            except asyncio.TimeoutError:
+                await ctx.author.send("Timed out.")
             else:
-                await ctx.author.send(
-                    f"Timed out. Payment not Received.")
-            jshelper.makeclose(ctx.author.id)
+                embed = discord.Embed(color=0xf50000)
+                embed.add_field(name=f"Please wait while we process your payment!",
+                                value=f"Usually takes upto 5 mins.")
+                msg = await ctx.author.send(embed=embed)
+                checkifright = await checkmail(price, number)
+                if checkifright:
+                    await ctx.author.send(f"{ctx.author.mention} Thank You! Payment recieved.")
+                else:
+                    await ctx.author.send(
+                        f"Timed out. Payment not Received.")
+                jshelper.makeclose(ctx.author.id)
             
     @tasks.loop(seconds=30)
     async def fetch_email(self):
