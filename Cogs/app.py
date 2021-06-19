@@ -39,46 +39,46 @@ class app(commands.Cog):
         self.bot = bot
 
     def openf(self, name):
-        path = os.getcwd() + f"/Cogs/Json/{name}"
+        path = os.getcwd() + f"{name}"
         with open(path, "r") as f:
             data = json.load(f)
         return data
 
     def savef(self, name, data):
-        path = os.getcwd() + f"/Cogs/Json/{name}"
+        path = os.getcwd() + f"{name}"
         with open(path, "w") as f:
             json.dump(data, f, indent=4, default=str)
 
     def save_user(self, id, creds):
-        data = self.openf("cdb.json")
+        data = self.openf("/Cogs/Json/cdb.json")
         data["members"][str(id)] = {
             "open": 0,
             "date": datetime.now(),
             "id": id,
         }
-        self.savef("cdb.json", data)
+        self.savef("/Cogs/Json/cdb.json", data)
 
     def makeopen(self, id):
-        data = self.openf("cdb.json")
+        data = self.openf("/Cogs/Json/cdb.json")
         check = 0
         for member in data["members"]:
             if data["members"][member]["id"] == id:
                 check = 1
                 data["members"][member]["open"] = 1
-                self.savef("cdb.json", data)
+                self.savef("/Cogs/Json/cdb.json", data)
 
     def makeclose(self, id):
-        data = self.openf("cdb.json")
+        data = self.openf("/Cogs/Json/cdb.json")
         check = 0
         for member in data["members"]:
             if data["members"][member]["id"] == id:
                 check = 1
                 data["members"][member]["open"] = 0
-                self.savef("cdb.json", data)
+                self.savef("/Cogs/Json/cdb.json", data)
 
     def checkopen(self, id):
         check = 0
-        data = self.openf("cdb.json")
+        data = self.openf("/Cogs/Json/cdb.json")
         for member in data["members"]:
             if data["members"][member]["id"] == id:
                 if data["members"][member]["open"] == 1:
@@ -90,7 +90,7 @@ class app(commands.Cog):
             return False
 
     def userexsist(self, id):
-        data = self.openf("cdb.json")
+        data = self.openf("/Cogs/Json/cdb.json")
         check = 0
         for member in data["members"]:
             if data["members"][member]["id"] == id:
@@ -101,7 +101,7 @@ class app(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        data = self.openf("info.json")
+        data = self.openf("settings.json")
         self.price = data["Price"]
         self.ca = cashappaddy + data["cashapp"]
         self.vm = paypaladdy + data["venmo"]
@@ -126,14 +126,13 @@ class app(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def setprice(self, ctx, price, tier):
+    async def setprice(self, ctx, price):
         if price.isnumeric():
-            data = self.openf("price.json")
-            if tier is '1':
-                data["Price"] = int(price)
-                embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
-                await ctx.send(embed=embed)
-
+            data = self.openf("settings.json")
+            data["Price"] = int(price)
+            embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
+            await ctx.send(embed=embed)
+                
     @commands.command()
     async def cancel(self, ctx):
         if self.checkopen(int(ctx.author.id)):
