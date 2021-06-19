@@ -11,7 +11,7 @@ def openf(name):
         data = json.load(f)
     return data
 
-data = openf("settings.json")
+data = openf("/settings.json")
 TOKEN = data["token"]
 bot = commands.Bot(command_prefix=".")
 bot.remove_command('help')

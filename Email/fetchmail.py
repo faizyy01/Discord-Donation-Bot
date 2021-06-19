@@ -10,7 +10,7 @@ import Cogs.Json.jshelper as jshelper
 
 def fetchmail():
     try:
-        data = jshelper.openf("settings.json")
+        data = jshelper.openf("/settings.json")
         user = data["user"]
         password = data["password"]
         imap_url = data["imap_url"]
