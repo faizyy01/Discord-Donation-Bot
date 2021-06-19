@@ -3,10 +3,16 @@ import os
 from discord.ext import commands, tasks
 from discord.utils import get
 import asyncio
+import json
 
-with open("token.txt", "r") as f:
-    TOKEN = f.readline()
+def openf(name):
+    path = os.getcwd() + f"{name}"
+    with open(path, "r") as f:
+        data = json.load(f)
+    return data
 
+data = openf("settings.json")
+TOKEN = data["token"]
 bot = commands.Bot(command_prefix=".")
 bot.remove_command('help')
 
