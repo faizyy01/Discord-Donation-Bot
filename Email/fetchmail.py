@@ -5,22 +5,12 @@ import Email.db as db
 from smtplib import SMTP_SSL, SMTP_SSL_PORT
 import json 
 import os 
-
-def openf(name):
-    path = os.getcwd() + f"{name}"
-    with open(path, "r") as f:
-        data = json.load(f)
-    return data
-
-def savef(name, data):
-    path = os.getcwd() + f"{name}"
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4, default=str)
+import Cogs.Json.jshelper as jshelper
 
 
 def fetchmail():
     try:
-        data = openf("settings.json")
+        data = jshelper.openf("settings.json")
         user = data["user"]
         password = data["password"]
         imap_url = data["imap_url"]

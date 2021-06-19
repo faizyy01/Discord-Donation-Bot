@@ -7,6 +7,7 @@ import asyncio
 from datetime import datetime, timedelta
 import Email.db as db
 import Email.fetchmail as fetch
+import Cogs.Json.jshelper as jshelper
 from discord.ext.commands.cooldowns import BucketType
 
 t = BucketType.user
@@ -38,70 +39,9 @@ class app(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def openf(self, name):
-        path = os.getcwd() + f"{name}"
-        with open(path, "r") as f:
-            data = json.load(f)
-        return data
-
-    def savef(self, name, data):
-        path = os.getcwd() + f"{name}"
-        with open(path, "w") as f:
-            json.dump(data, f, indent=4, default=str)
-
-    def save_user(self, id, creds):
-        data = self.openf("/Cogs/Json/cdb.json")
-        data["members"][str(id)] = {
-            "open": 0,
-            "date": datetime.now(),
-            "id": id,
-        }
-        self.savef("/Cogs/Json/cdb.json", data)
-
-    def makeopen(self, id):
-        data = self.openf("/Cogs/Json/cdb.json")
-        check = 0
-        for member in data["members"]:
-            if data["members"][member]["id"] == id:
-                check = 1
-                data["members"][member]["open"] = 1
-                self.savef("/Cogs/Json/cdb.json", data)
-
-    def makeclose(self, id):
-        data = self.openf("/Cogs/Json/cdb.json")
-        check = 0
-        for member in data["members"]:
-            if data["members"][member]["id"] == id:
-                check = 1
-                data["members"][member]["open"] = 0
-                self.savef("/Cogs/Json/cdb.json", data)
-
-    def checkopen(self, id):
-        check = 0
-        data = self.openf("/Cogs/Json/cdb.json")
-        for member in data["members"]:
-            if data["members"][member]["id"] == id:
-                if data["members"][member]["open"] == 1:
-                    check = 1
-
-        if check == 1:
-            return True
-        else:
-            return False
-
-    def userexsist(self, id):
-        data = self.openf("/Cogs/Json/cdb.json")
-        check = 0
-        for member in data["members"]:
-            if data["members"][member]["id"] == id:
-                check = 1
-
-        if check != 1:
-            self.save_user(id, 0)
-
     @commands.Cog.listener()
     async def on_ready(self):
-        data = self.openf("settings.json")
+        data = jshelper.openf("settings.json")
         self.price = data["Price"]
         self.ca = cashappaddy + data["cashapp"]
         self.vm = paypaladdy + data["venmo"]
@@ -117,27 +57,19 @@ class app(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def uc(self, ctx, member: discord.Member, amount):
-        amount = int(amount)
-        user_creds = self.get_creds(member.id)
-        newbalance = user_creds + amount
-        self.change_creds(member.id, newbalance)
-        await ctx.channel.send("Updated users credits.")
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
     async def setprice(self, ctx, price):
         if price.isnumeric():
-            data = self.openf("settings.json")
+            data = jshelper.openf("settings.json")
             data["Price"] = int(price)
+            jshelper.savef("settings.json", data)
             embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
             await ctx.send(embed=embed)
                 
     @commands.command()
     async def cancel(self, ctx):
-        if self.checkopen(int(ctx.author.id)):
+        if jshelper.checkopen(int(ctx.author.id)):
             await ctx.channel.send("Your Previous order has been canceled.")
-            self.makeclose(ctx.author.id)
+            jshelper.makeclose(ctx.author.id)
         else:
             await ctx.channel.send("Your don't have any orders open.")
 
@@ -145,7 +77,7 @@ class app(commands.Cog):
     @commands.command(ignore_extra=False)
     async def buy(self, ctx, payment):
         price = self.price
-        if self.checkopen(int(ctx.author.id)):
+        if jshelper.checkopen(int(ctx.author.id)):
             await ctx.channel.send(
                 "Please Finish your existing order before opening a new one. Or type '.cancel' to cancel your previous order.")
             return
@@ -158,8 +90,8 @@ class app(commands.Cog):
             else:
                 payment = self.vm   
 
-            self.userexsist(ctx.author.id)  
-            self.makeopen(ctx.author.id)
+            jshelper.userexsist(ctx.author.id)  
+            jshelper.makeopen(ctx.author.id)
 
             embed = discord.Embed(title="{}".format(ctx.channel.name))
             embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}",
@@ -174,7 +106,7 @@ class app(commands.Cog):
             else:
                 await ctx.channel.send(
                     f"30 mins over. Payment not Received.")
-            self.makeclose(ctx.author.id)
+            jshelper.makeclose(ctx.author.id)
         else:
             await ctx.channel.send("Incorrect command please recheck what you typed.")
 
