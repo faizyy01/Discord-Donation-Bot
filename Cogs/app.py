@@ -3,6 +3,7 @@ import json
 import random
 import os
 from discord.ext import commands, tasks
+from discord.utils import get
 import asyncio
 from datetime import datetime, timedelta
 
@@ -48,6 +49,7 @@ class app(commands.Cog):
         self.ca = f'Cashapp: ${data["cashapp"]}'
         self.vm = f'Venmo: @{data["venmo"]}'
         self.note = data["note"]
+        self.role = data["role"]
         # self.change_status.start()
     
     @commands.command()
@@ -67,7 +69,21 @@ class app(commands.Cog):
             jshelper.savef("/config.json", data)
             embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
             await ctx.send(embed=embed)
-                
+    
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def setrole(self, ctx, role: discord.Role):
+        data = jshelper.openf("/config.json")
+        data["role"] = str(role.name)
+        self.role = str(role.name)
+        jshelper.savef("/config.json", data)
+        embed = discord.Embed(title=f"{role} has been set as the role.", color=0xf50000)
+        await ctx.send(embed=embed)
+    
+    async def assignrole(self, ctx, role):
+        role = get(ctx.guild.roles, name=role)
+        await ctx.message.author.add_roles(role, reason="Donated.")
+
     @commands.command()
     async def cancel(self, ctx):
         if jshelper.checkopen(int(ctx.author.id)):
@@ -139,9 +155,10 @@ class app(commands.Cog):
                 checkifright = await checkmail(price, number)
                 if checkifright:
                     await ctx.author.send(f"{ctx.author.mention} Thank You! Payment recieved.")
+                    await self.assignrole(ctx,self.role)
                 else:
                     await ctx.author.send(
-                        f"Timed out. Payment not Received.")
+                        f"Timed out. Payment not Received. Contact server admin if you have paid.")
                 jshelper.makeclose(ctx.author.id)
             
     @tasks.loop(seconds=30)
