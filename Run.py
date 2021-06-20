@@ -13,7 +13,7 @@ def openf(name):
         data = json.load(f)
     return data
 
-data = openf("/settings.json")
+data = openf("/config.json")
 TOKEN = data["token"]
 intents = discord.Intents.default()
 intents.members = True

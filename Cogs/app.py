@@ -43,7 +43,7 @@ class app(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        data = jshelper.openf("/settings.json")
+        data = jshelper.openf("/config.json")
         self.price = data["Price"]
         self.ca = f'Cashapp: ${data["cashapp"]}'
         self.vm = f'Venmo: @{data["venmo"]}'
@@ -61,9 +61,9 @@ class app(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def setprice(self, ctx, price):
         if price.isnumeric():
-            data = jshelper.openf("/settings.json")
+            data = jshelper.openf("/config.json")
             data["Price"] = int(price)
-            jshelper.savef("/settings.json", data)
+            jshelper.savef("/config.json", data)
             embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
             await ctx.send(embed=embed)
                 
