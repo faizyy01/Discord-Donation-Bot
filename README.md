@@ -1,4 +1,4 @@
-# Discord-Payment-Bot
-Accept Cashapp or Venmo payments using this discord bot.
+# Discord-Donate-Bot
+Accept Cashapp or Venmo donations using this discord bot.
 
 # Wiki coming soon
