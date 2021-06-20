@@ -52,7 +52,7 @@ class app(commands.Cog):
     
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def listprices(self, ctx):
+    async def listprice(self, ctx):
         embed1 = discord.Embed(title="Pay using Cashapp or Venmo",
                                description=f"Cost: ${self.price}.", color=0xf50000)
         await ctx.channel.send(embed=embed1)
@@ -63,6 +63,7 @@ class app(commands.Cog):
         if price.isnumeric():
             data = jshelper.openf("/config.json")
             data["Price"] = int(price)
+            self.price = int(price)
             jshelper.savef("/config.json", data)
             embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
             await ctx.send(embed=embed)
@@ -93,17 +94,17 @@ class app(commands.Cog):
             msg = await ctx.author.send(embed=embed)
             await msg.add_reaction(nay)
             try:
-                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
             except asyncio.TimeoutError:
                 await ctx.author.send("Timed out.")
             else:
                 await self.cancel(ctx)
-        embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to donate with Cashapp.\nClick {two} to donate with Venmo.\nThis menu will time out in 1 minute.',color=0x800080)
+        embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to donate with Cashapp.\nClick {two} to donate with Venmo.\nThis menu will time out in 2 minutes.',color=0x800080)
         msg = await ctx.author.send(embed=embed)
         await msg.add_reaction(one)
         await msg.add_reaction(two)
         try:
-            reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
         except asyncio.TimeoutError:
             await ctx.author.send("Timed out.")
         else:
