@@ -60,7 +60,7 @@ class app(commands.Cog):
         self.vm = f'Venmo: @{data["venmo"]}'
         self.note = data["note"]
         self.role = data["role"] 
-        # self.change_status.start()
+        self.fetch_email.start()
     
     @commands.command()
     @commands.has_permissions(administrator=True)
@@ -195,7 +195,7 @@ class app(commands.Cog):
                         f"Timed out. Payment not Received. Contact server admin if you have paid.")
                 jshelper.makeclose(ctx.author.id)
             
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=60)
     async def fetch_email(self):
         fetch.fetchmail()
 
