@@ -49,7 +49,7 @@ class app(commands.Cog):
         self.ca = f'Cashapp: ${data["cashapp"]}'
         self.vm = f'Venmo: @{data["venmo"]}'
         self.note = data["note"]
-        self.role = data["role"]
+        self.role = data["role"] 
         # self.change_status.start()
     
     @commands.command()
@@ -79,7 +79,29 @@ class app(commands.Cog):
         jshelper.savef("/config.json", data)
         embed = discord.Embed(title=f"{role} has been set as the role.", color=0xf50000)
         await ctx.send(embed=embed)
-    
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def setpayment(self, ctx, type, addy):
+        type = str.lower(type)
+        if type == "cashapp":
+            data = jshelper.openf("/config.json")
+            data["cashapp"] = str(addy)
+            self.ca = f'Cashapp: ${str(addy)}'
+            jshelper.savef("/config.json", data)
+            embed = discord.Embed(title=f"${addy} has been set as the cashapp address.", color=0xf50000)
+            await ctx.send(embed=embed)
+        elif type == "venmo":
+            data = jshelper.openf("/config.json")
+            data["venmo"] = str(addy)
+            self.ca = f'Venmo: ${str(addy)}'
+            jshelper.savef("/config.json", data)
+            embed = discord.Embed(title=f"@{addy} has been set as the Venmo address.", color=0xf50000)
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(title=f'Error, Please use ".setpayment (cashapp/venmo) address"', color=0xf50000)
+            await ctx.send(embed=embed)
+
     async def assignrole(self, ctx, role):
         role = get(ctx.guild.roles, name=role)
         await ctx.message.author.add_roles(role, reason="Donated.")
@@ -95,6 +117,7 @@ class app(commands.Cog):
     @commands.cooldown(rate, per, t)
     @commands.command(ignore_extra=False)
     async def donate(self, ctx):
+        await ctx.channel.send(f'{ctx.author.mention} Please check dms!')
         one  = '1️⃣'
         two = '2️⃣'
         nay = '❌'

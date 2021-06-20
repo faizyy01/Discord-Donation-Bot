@@ -5,7 +5,6 @@ from discord.utils import get
 import asyncio
 import json
 
-status = 1
 
 def openf(name):
     path = os.getcwd() + f"{name}"
@@ -48,47 +47,13 @@ async def reload(ctx, name):
     print(f"The {name} cog has been reloaded successfully.")
 
 
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def openstore(ctx):
-    global status
-    status = 1
-    await ctx.channel.send("store is open")
-
-
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def closestore(ctx):
-    global status
-    status = 0
-    await ctx.channel.send("store is closed")
-
-
 @bot.event
 async def on_message(message):
     if message.author.id == bot.user.id:
         return
-    #if message.author.guild_permissions.administrator:
-        #await bot.process_commands(message)
-        #return
     if not message.guild:
         return
-    if status == 0:
-        return
     await bot.process_commands(message)
-
-@bot.event
-async def on_guild_channel_create(channel):
-    await asyncio.sleep(1)
-    embed = discord.Embed(title="Help", description="These are the commands for the bot.", color=0xf50000)
-    embed.add_field(name='.buy <amount> <cashapp or Venmo>',
-                    value='This command is used to buy Example: `.buy cashapp`',
-                    inline=False)
-    embed.add_field(name='.help', value='This command is used to display this message.', inline=False)
-    await channel.send(embed=embed)
-    await asyncio.sleep(1)
-
-
 
 @bot.command()
 @commands.has_permissions(administrator=True)
