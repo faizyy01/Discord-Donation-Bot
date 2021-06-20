@@ -17,7 +17,7 @@ def fetchmail():
         #note = data["note"]
         mail = imaplib.IMAP4_SSL(imap_url)
         mail.login(user, password)
-        mail.select('cash')
+        mail.select('pay')
         type, data = mail.search(None, 'UNSEEN')
         mail_ids = data[0]
         id_list = mail_ids.split()
