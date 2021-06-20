@@ -6,7 +6,6 @@ from discord.ext import commands, tasks
 from discord.utils import get
 import asyncio
 from datetime import datetime, timedelta
-
 from discord.ext.commands import bot
 import Email.db as db
 import Email.fetchmail as fetch
@@ -187,7 +186,9 @@ class app(commands.Cog):
                 msg = await ctx.author.send(embed=embed)
                 checkifright = await checkmail(price, number)
                 if checkifright:
-                    await ctx.author.send(f"{ctx.author.mention} Thank You! Payment recieved.")
+                    await msg.delete()
+                    embed = discord.Embed(title= "Payment recieved. Thank you!", color=0x00ff00)
+                    await ctx.author.send(embed=embed)
                     await self.assignrole(ctx,self.role)
                 else:
                     await ctx.author.send(
