@@ -77,7 +77,7 @@ class app(commands.Cog):
     
     @commands.cooldown(rate, per, t)
     @commands.command(ignore_extra=False)
-    async def buy(self, ctx):
+    async def donate(self, ctx):
         one  = '1️⃣'
         two = '2️⃣'
         nay = '❌'
@@ -98,7 +98,7 @@ class app(commands.Cog):
                 await ctx.author.send("Timed out.")
             else:
                 await self.cancel(ctx)
-        embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to pay with Cashapp.\nClick {two} to pay with Venmo.\nThis menu will time out in 1 minute.',color=0x800080)
+        embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to donate with Cashapp.\nClick {two} to donate with Venmo.\nThis menu will time out in 1 minute.',color=0x800080)
         msg = await ctx.author.send(embed=embed)
         await msg.add_reaction(one)
         await msg.add_reaction(two)
