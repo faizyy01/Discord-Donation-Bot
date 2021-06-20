@@ -36,6 +36,17 @@ async def checkmail(money, codeid):
                 return True
         await asyncio.sleep(30)
 
+def gencode():
+    number = random.randint(1000, 9999)
+    all = db.read_useremail()
+    if len(all) == 0:
+        return number
+    for code in all:
+        if number == code:
+            return gencode()
+        else:
+            return number
+    
 
 class app(commands.Cog):
     
@@ -154,8 +165,7 @@ class app(commands.Cog):
             else:
                 ctx.author.send("Incorrect reaction please start over again.")
                 return
-            
-            number = random.randint(1000, 9999)
+            number = gencode()
             note = self.note + str(number)
             jshelper.userexsist(ctx.author.id)  
             jshelper.makeopen(ctx.author.id)
