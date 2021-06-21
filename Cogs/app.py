@@ -54,7 +54,7 @@ class app(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        data = jshelper.openf("/config.json")
+        data = jshelper.openf("/config/config.json")
         self.price = data["Price"]
         self.ca = f'Cashapp: ${data["cashapp"]}'
         self.vm = f'Venmo: @{data["venmo"]}'
@@ -73,20 +73,20 @@ class app(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def setprice(self, ctx, price):
         if price.isnumeric():
-            data = jshelper.openf("/config.json")
+            data = jshelper.openf("/config/config.json")
             data["Price"] = int(price)
             self.price = int(price)
-            jshelper.savef("/config.json", data)
+            jshelper.savef("/config/config.json", data)
             embed = discord.Embed(title=f"${price} has been set as the price.", color=0xf50000)
             await ctx.send(embed=embed)
     
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def setrole(self, ctx, role: discord.Role):
-        data = jshelper.openf("/config.json")
+        data = jshelper.openf("/config/config.json")
         data["role"] = str(role.name)
         self.role = str(role.name)
-        jshelper.savef("/config.json", data)
+        jshelper.savef("/config/config.json", data)
         embed = discord.Embed(title=f"{role} has been set as the role.", color=0xf50000)
         await ctx.send(embed=embed)
 
@@ -95,17 +95,17 @@ class app(commands.Cog):
     async def setpayment(self, ctx, type, addy):
         type = str.lower(type)
         if type == "cashapp":
-            data = jshelper.openf("/config.json")
+            data = jshelper.openf("/config/config.json")
             data["cashapp"] = str(addy)
             self.ca = f'Cashapp: ${str(addy)}'
-            jshelper.savef("/config.json", data)
+            jshelper.savef("/config/config.json", data)
             embed = discord.Embed(title=f"${addy} has been set as the cashapp address.", color=0xf50000)
             await ctx.send(embed=embed)
         elif type == "venmo":
-            data = jshelper.openf("/config.json")
+            data = jshelper.openf("/config/config.json")
             data["venmo"] = str(addy)
             self.ca = f'Venmo: ${str(addy)}'
-            jshelper.savef("/config.json", data)
+            jshelper.savef("/config/config.json", data)
             embed = discord.Embed(title=f"@{addy} has been set as the Venmo address.", color=0xf50000)
             await ctx.send(embed=embed)
         else:

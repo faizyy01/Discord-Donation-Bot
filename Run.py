@@ -8,12 +8,12 @@ import Cogs.Json.jshelper as jshelper
 import sys
 
 jshelper.prestart()
-data = jshelper.openf("/config.json")
+data = jshelper.openf("/config/config.json")
 if data["token"] == "":
     print("Missing Config.")
     sys.exit()
         
-data = jshelper.openf("/config.json")
+data = jshelper.openf("/config/config.json")
 TOKEN = data["token"]
 intents = discord.Intents.default()
 intents.members = True
