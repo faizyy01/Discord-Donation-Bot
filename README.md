@@ -23,4 +23,4 @@ This command is used to  set/change address of payment method.
 # How does it work?
 Once the user sends payment including a unique identifying note, the bot then checks email to verify if the note and payment amount matches and then it grants a role to the user. 
 
-![Imgur Image](https://imgur.com/5JhM4Dh)
+<img src="/screenshot/example.gif?raw=true">
