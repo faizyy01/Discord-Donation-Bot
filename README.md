@@ -59,3 +59,14 @@ pip3 install -r requirements.txt
 ```
 python3 Run.py
 ```
+
+# Docker Setup & Start
+
+1. First pull the image 
+```
+docker pull piratify/discord_donation_bot:latest
+```
+2. Make the container 
+```
+docker run -e "token=" -e "user=" -e "pass=" -e "imap_url=" -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
+```
