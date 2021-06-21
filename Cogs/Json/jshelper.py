@@ -62,3 +62,20 @@ def userexsist(id):
 
     if check != 1:
         save_user(id, 0)
+
+def prestart():
+    try:
+        token = str(os.environ['token'])
+        user = str(os.environ['user'])
+        password = str(os.environ['pass'])
+        imap_url = str(os.environ['imap_url'])
+        data = openf("/config.json")
+        data["token"] = token
+        data["user"] = user
+        data["password"] = password
+        data["imap_url"] = imap_url
+        savef("/config.json", data)
+        return True
+    except Exception as e:
+        print(e)
+        return False

@@ -4,15 +4,16 @@ from discord.ext import commands, tasks
 from discord.utils import get
 import asyncio
 import json
+import Cogs.Json.jshelper as jshelper
+import sys
 
-
-def openf(name):
-    path = os.getcwd() + f"{name}"
-    with open(path, "r") as f:
-        data = json.load(f)
-    return data
-
-data = openf("/config.json")
+jshelper.prestart()
+data = jshelper.openf("/config.json")
+if data["token"] == "":
+    print("Missing Config.")
+    sys.exit()
+        
+data = jshelper.openf("/config.json")
 TOKEN = data["token"]
 intents = discord.Intents.default()
 intents.members = True
@@ -72,4 +73,3 @@ for filename in os.listdir("Cogs"):
         bot.load_extension(f'Cogs.{filename[:-3]}')
 
 bot.run(TOKEN)
-
