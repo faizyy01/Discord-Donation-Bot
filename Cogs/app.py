@@ -104,7 +104,7 @@ class app(commands.Cog):
         elif type == "venmo":
             data = jshelper.openf("/config/config.json")
             data["venmo"] = str(addy)
-            self.ca = f'Venmo: ${str(addy)}'
+            self.vm = f'Venmo: ${str(addy)}'
             jshelper.savef("/config/config.json", data)
             embed = discord.Embed(title=f"@{addy} has been set as the Venmo address.", color=0xf50000)
             await ctx.send(embed=embed)
