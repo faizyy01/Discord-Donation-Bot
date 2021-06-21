@@ -78,5 +78,5 @@ docker run -e "token=" -e "user=" -e "pass=" -e "imap_url=" -d --restart unless-
 OR
 
 ```
-docker run -v /path to config:/app/config.json -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
+docker run -e "token=" -e "user=" -e "pass=" -e "imap_url=" -v /path to config:/app/config.json -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
 ```
