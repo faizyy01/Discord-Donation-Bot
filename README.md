@@ -1,3 +1,5 @@
+[![DockerHub](https://img.shields.io/badge/Docker-Hub-%23099cec?style=for-the-badge&logo=docker)](https://hub.docker.com/r/piratify/discord_donation_bot)
+![Docker Pulls](https://img.shields.io/docker/pulls/piratify/discord_donation_bot?color=099cec&style=for-the-badge)
 Discord Donation Bot 
 =================
 
