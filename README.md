@@ -24,3 +24,38 @@ This command is used to  set/change address of payment method.
 Once the user sends payment including a unique identifying note, the bot then checks email to verify if the note and payment amount matches and then it grants a role to the user. 
 
 <img src="https://github.com/Sleepingpirates/Discord-Donation-Bot/blob/main/Screenshots/example.gif">
+
+# Setup 
+
+**1. Fill out config.json**
+
+Follow guide to setup everything properly. (Important)
+
+[Click here for the full setup guide.](https://github.com/Sleepingpirates/Discord-Donation-Bot/wiki/Configuration)
+
+**Example config.json**
+
+```
+{
+    "token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "role": "donator",
+    "Price": 10,
+    "cashapp": "test",
+    "venmo": "test",
+    "note":"1a001-",
+    "user":"test@gmail.com",
+    "password":"vaadsgagcqlgzsox",
+    "imap_url":"imap.gmail.com"
+}
+```
+
+# Start 
+
+1. Install requirements
+```
+pip3 install -r requirements.txt 
+```
+2. Start the bot
+```
+python3 Run.py
+```
