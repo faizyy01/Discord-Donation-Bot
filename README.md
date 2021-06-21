@@ -1,3 +1,6 @@
+[![DockerHub](https://img.shields.io/badge/Docker-Hub-%23099cec?style=for-the-badge&logo=docker)](https://hub.docker.com/r/piratify/discord_donation_bot)
+![Docker Pulls](https://img.shields.io/docker/pulls/piratify/discord_donation_bot?color=099cec&style=for-the-badge)
+
 Discord Donation Bot 
 =================
 
@@ -58,4 +61,22 @@ pip3 install -r requirements.txt
 2. Start the bot
 ```
 python3 Run.py
+```
+
+# Docker Setup & Start
+
+1. First pull the image 
+```
+docker pull piratify/discord_donation_bot:latest
+```
+2. Make the container 
+
+```
+docker run -e "token=" -e "user=" -e "pass=" -e "imap_url=" -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
+```
+
+OR
+
+```
+docker run -v /path to config:/app/config.json -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
 ```
