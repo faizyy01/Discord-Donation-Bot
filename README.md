@@ -75,7 +75,7 @@ docker pull piratify/discord_donation_bot:latest
 docker run -e "token=" -e "user=" -e "pass=" -e "imap_url=" -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
 ```
 
-OR
+OR (make sure you have the config file loaded)
 
 ```
 docker run -v /path to config:/app/config/ -d --restart unless-stopped --name ddb piratify/discord_donation_bot:latest
