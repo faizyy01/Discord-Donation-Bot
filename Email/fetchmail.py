@@ -14,6 +14,7 @@ def fetchmail():
         user = data["user"]
         password = data["password"]
         imap_url = data["imap_url"]
+        print(user)
         #note = data["note"]
         mail = imaplib.IMAP4_SSL(imap_url)
         mail.login(user, password)

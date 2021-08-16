@@ -79,3 +79,51 @@ def prestart():
     except Exception as e:
         print(e)
         return False
+
+def expirycheck():
+    listofmembers = [] 
+    data = openf("/Cogs/Json/donator.json")
+    for member in data["members"]:
+        date = data["members"][member]["date"]
+        donation_date = datetime.strptime(date,'%Y-%m-%d %H:%M:%S.%f')
+        end_date = datetime.now() - timedelta(30)
+        if(end_date > donation_date):
+            listofmembers.append(data["members"][member]["id"])
+    return listofmembers
+    
+def save_donator(id):
+    data = openf("/Cogs/Json/donator.json")
+    data["members"][str(id)] = {
+        "date": datetime.now(),
+        "id": id,
+    }
+    savef("/Cogs/Json/donator.json", data)
+
+def isuserdonator(id):
+    data = openf("/Cogs/Json/donator.json")
+    for member in data["members"]:
+        if data["members"][member]["id"] == id:
+            return True
+    return False
+
+def donationexpire(id):
+    data = openf("/Cogs/Json/donator.json")
+    for member in data["members"]:
+        for member in data["members"]:
+            if data["members"][member]["id"] == id:
+                date = data["members"][member]["date"]
+        donation_date = datetime.strptime(date,'%Y-%m-%d %H:%M:%S.%f')
+        end_date = donation_date + timedelta(30)
+        return end_date.strftime("%b %d %Y")
+
+def deldon(id):
+    data = openf("/Cogs/Json/donator.json")
+    for member in data["members"]:
+        if data["members"][member]["id"] == id:
+            del data["members"][member]
+            break
+    savef("/Cogs/Json/donator.json", data)
+
+
+
+

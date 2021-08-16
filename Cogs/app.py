@@ -59,8 +59,10 @@ class app(commands.Cog):
         self.ca = f'Cashapp: ${data["cashapp"]}'
         self.vm = f'Venmo: @{data["venmo"]}'
         self.note = data["note"]
+        self.guild_id= data["guild_id"]
         self.role = data["role"] 
         self.fetch_email.start()
+        self.membership.start()
     
     @commands.command()
     @commands.has_permissions(administrator=True)
@@ -123,11 +125,26 @@ class app(commands.Cog):
             jshelper.makeclose(ctx.author.id)
         else:
             await ctx.author.send("Your don't have any orders open.")
-    
+
+    @commands.cooldown(rate, per, t)
+    @commands.command(ignore_extra=False)
+    async def status(self, ctx):
+        if jshelper.isuserdonator(int(ctx.author.id)):
+            date = jshelper.donationexpire(int(ctx.author.id))
+            embed = discord.Embed(color=0xf50000)
+            embed.add_field(name=f"Donation Status",
+                            value=f"Your donation will expire on {date}")
+            msg = await ctx.channel.send(embed=embed)
+        else:
+            embed = discord.Embed(color=0xf50000)
+            embed.add_field(name=f"Error",
+                            value=f"You are not a donator. To donate please type .donate")
+            msg = await ctx.channel.send(embed=embed)
+            
     @commands.cooldown(rate, per, t)
     @commands.command(ignore_extra=False)
     async def donate(self, ctx):
-        await ctx.channel.send(f'{ctx.author.mention} Please check dms!')
+        #await ctx.channel.send(f'{ctx.author.mention} Please check dms!')
         one  = '1️⃣'
         two = '2️⃣'
         nay = '❌'
@@ -136,33 +153,40 @@ class app(commands.Cog):
         def check(reaction, user):
             return user == ctx.author and str(reaction.emoji) in recs
         price = self.price
-        if jshelper.checkopen(int(ctx.author.id)):
+        if jshelper.isuserdonator(int(ctx.author.id)):
+            date = jshelper.donationexpire(int(ctx.author.id))
+            embed = discord.Embed(color=0xf50000)
+            embed.add_field(name=f"ERROR",
+                            value=f"You are already a donator. Your donation will expire on {date}")
+            msg = await ctx.channel.send(embed=embed)
+            return
+        elif jshelper.checkopen(int(ctx.author.id)):
             embed = discord.Embed(color=0xf50000)
             embed.add_field(name=f"ERROR",
                             value=f"Please Finish your existing order before opening a new one. \nOr press {nay} button to cancel your previous order.")
-            msg = await ctx.author.send(embed=embed)
+            msg = await ctx.channel.send(embed=embed)
             await msg.add_reaction(nay)
             try:
-                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=43200, check=check)
             except asyncio.TimeoutError:
-                await ctx.author.send("Timed out.")
+                await ctx.channel.send("Timed out.")
             else:
                 await self.cancel(ctx)
-        embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to donate with Cashapp.\nClick {two} to donate with Venmo.\nThis menu will time out in 2 minutes.',color=0x800080)
-        msg = await ctx.author.send(embed=embed)
+        embed = discord.Embed(title="Choose Payment Method",description=f'Click {one} to donate with Cashapp.\nClick {two} to donate with Venmo.',color=0x800080)
+        msg = await ctx.channel.send(embed=embed)
         await msg.add_reaction(one)
         await msg.add_reaction(two)
         try:
-            reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=120.0, check=check)
+            reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=43200, check=check)
         except asyncio.TimeoutError:
-            await ctx.author.send("Timed out.")
+            await ctx.channel.send("Timed out.")
         else:
             if str(reaction.emoji) == one:
                 payment = self.ca
             elif str(reaction.emoji) == two: 
                 payment = self.vm
             else:
-                ctx.author.send("Incorrect reaction please start over again.")
+                ctx.channel.send("Incorrect reaction please start over again.")
                 return
             number = gencode()
             note = self.note + str(number)
@@ -171,34 +195,55 @@ class app(commands.Cog):
             
             embed = discord.Embed(title=f'Payment via {payment}',color=0xf50000)
             embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}\nMake sure you send the exact amount with the NOTE.",
-                            value=f"This page will timeout in 30 mins.\nClick {tick} once you have sent the payment.")
-            msg = await ctx.author.send(embed=embed)
-            await ctx.author.send(note)
+                            value=f"Click {tick} once you have sent the payment.")
+            msg = await ctx.channel.send(embed=embed)
+            await ctx.channel.send(note)
             await msg.add_reaction(tick)
             try:
-                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=1800.0, check=check)
+                reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=43200, check=check)
             except asyncio.TimeoutError:
-                await ctx.author.send("Timed out.")
+                jshelper.makeclose(ctx.author.id)
+                await ctx.channel.send("Timed out.")
             else:
                 embed = discord.Embed(color=0xf50000)
                 embed.add_field(name=f"Please wait while we process your payment!",
                                 value=f"Usually takes upto 5 mins.")
-                msg = await ctx.author.send(embed=embed)
+                msg = await ctx.channel.send(embed=embed)
                 checkifright = await checkmail(price, number)
                 if checkifright:
                     await msg.delete()
+                    jshelper.save_donator(int(ctx.author.id))
                     embed = discord.Embed(title= "Payment recieved. Thank you!", color=0x00ff00)
-                    await ctx.author.send(embed=embed)
+                    await ctx.channel.send(embed=embed)
                     await self.assignrole(ctx,self.role)
                 else:
-                    await ctx.author.send(
+                    await ctx.channel.send(
                         f"Timed out. Payment not Received. Contact server admin if you have paid.")
                 jshelper.makeclose(ctx.author.id)
-            
+    
+
+
     @tasks.loop(seconds=60)
     async def fetch_email(self):
         fetch.fetchmail()
-
+    
+    @tasks.loop(seconds=900)
+    async def membership(self):
+        data = jshelper.openf("/config/config.json")
+        listofmembers = jshelper.expirycheck()
+        if len(listofmembers) > 0:
+            for members in listofmembers:
+                guild = self.bot.get_guild(self.guild_id)
+                mem = guild.get_member(members)
+                if mem is not None:
+                    role = get(guild.roles, name=self.role)
+                    await mem.remove_roles(role, reason="donation expired")
+                    jshelper.deldon(members)
+                    #get member remove role and db
+                else:
+                    jshelper.deldon(members)
+                    #remove from db
+    
 
 def setup(bot):
     bot.add_cog(app(bot))

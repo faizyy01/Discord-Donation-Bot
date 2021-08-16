@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_URL = os.getcwd() + '/Email/payrecs.db'
+DB_URL = 'Email/payrecs.db'
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
