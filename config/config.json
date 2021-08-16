@@ -7,5 +7,6 @@
     "note":"1a001-",
     "user":"",
     "password":"",
-    "imap_url":""
+    "imap_url":"",
+    "guild_id":""
 }

@@ -59,7 +59,7 @@ class app(commands.Cog):
         self.ca = f'Cashapp: ${data["cashapp"]}'
         self.vm = f'Venmo: @{data["venmo"]}'
         self.note = data["note"]
-        self.guild_id= data["guild_id"]
+        self.guild_id= int(data["guild_id"])
         self.role = data["role"] 
         self.fetch_email.start()
         self.membership.start()
