@@ -6,16 +6,24 @@ import asyncio
 import json
 import Cogs.Json.jshelper as jshelper
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.CRITICAL)
+log_formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(message)s')
+log_file_handler = logging.FileHandler(filename=f'{__name__}.log',mode='a')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
 
 jshelper.prestart()
 data = jshelper.openf("/config/config.json")
 if data["token"] == "":
-    print("Missing Config.")
+    logger.critical('Missing Config')
     sys.exit()
         
 data = jshelper.openf("/config/config.json")
 TOKEN = data["token"]
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 bot = commands.Bot(command_prefix=".", intents = intents)
 bot.remove_command('help')
@@ -23,21 +31,21 @@ bot.remove_command('help')
 
 @bot.event
 async def on_ready():
-    print("bot is online.")
+    logger.debug('Bot Online')
 
 
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def load(ctx, name):
     bot.load_extension(f'Cogs.{name}')
-    print(f"The {name} cog has been loaded successfully.")
+    logger.debug(f"The {name} cog has been loaded successfully.")
 
 
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def unload(ctx, name):
     bot.unload_extension(f'Cogs.{name}')
-    print(f"The {name} cog has been unloaded successfully.")
+    logger.debug(f"The {name} cog has been unloaded successfully.")
 
 
 @bot.command()
@@ -45,7 +53,7 @@ async def unload(ctx, name):
 async def reload(ctx, name):
     bot.unload_extension(f'Cogs.{name}')
     bot.load_extension(f'Cogs.{name}')
-    print(f"The {name} cog has been reloaded successfully.")
+    logger.debug(f"The {name} cog has been reloaded successfully.")
 
 
 @bot.event
@@ -65,11 +73,15 @@ async def all(ctx):
     for filename in os.listdir("Cogs"):
         if filename.endswith('.py'):
             bot.load_extension(f'Cogs.{filename[:-3]}')
-    print("All cogs has been reloaded.")
+    logger.debug("All cogs has been reloaded.")
 
 
-for filename in os.listdir("Cogs"):
-    if filename.endswith('.py'):
-        bot.load_extension(f'Cogs.{filename[:-3]}')
-
+async def load_cogs():
+    try:
+        logger.debug('Loading cogs')
+        await bot.load_extension('Cogs.app')
+        logger.debug('App Cog loaded')
+    except Exception as e:
+        logger.critical(f'There was an error loading the cogs. Below is the exception: \n\n {e} \n\n________________________')
+asyncio.run(load_cogs())
 bot.run(TOKEN)

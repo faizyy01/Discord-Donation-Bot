@@ -1,3 +1,5 @@
+import pathlib
+
 import discord
 import json
 import random
@@ -11,6 +13,15 @@ import Email.db as db
 import Email.fetchmail as fetch
 import Cogs.Json.jshelper as jshelper
 from discord.ext.commands.cooldowns import BucketType
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+log_formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(message)s')
+log_file_handler = logging.FileHandler(filename=f'{__name__}.log',mode='a')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
+
 
 t = BucketType.user
 rate = 1
@@ -173,6 +184,8 @@ class app(commands.Cog):
             embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}\nMake sure you send the exact amount with the NOTE.",
                             value=f"This page will timeout in 30 mins.\nClick {tick} once you have sent the payment.")
             msg = await ctx.author.send(embed=embed)
+            await ctx.author.send("Here is an example of how to fill out the cashapp form.", file=discord.File('Screenshots/example_cashapp.jpg'))
+            await ctx.author.send("Below is the note so you can copy and paste:")
             await ctx.author.send(note)
             await msg.add_reaction(tick)
             try:
@@ -200,5 +213,5 @@ class app(commands.Cog):
         fetch.fetchmail()
 
 
-def setup(bot):
-    bot.add_cog(app(bot))
+async def setup(bot):
+    await bot.add_cog(app(bot))

@@ -6,7 +6,14 @@ from smtplib import SMTP_SSL, SMTP_SSL_PORT
 import json 
 import os 
 import Cogs.Json.jshelper as jshelper
+import logging
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.CRITICAL)
+log_formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(message)s')
+log_file_handler = logging.FileHandler(filename=f'{__name__}.log',mode='a')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
 
 def fetchmail():
     try:
@@ -52,4 +59,4 @@ def fetchmail():
         mail.close()
         mail.logout()
     except Exception as e:
-        print(e)
+        logger.debug(e)
