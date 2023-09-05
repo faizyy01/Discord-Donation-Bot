@@ -187,6 +187,7 @@ class app(commands.Cog):
             await ctx.author.send("Here is an example of how to fill out the cashapp form.", file=discord.File('Screenshots/example_cashapp.jpg'))
             await ctx.author.send("Below is the note so you can copy and paste:")
             await ctx.author.send(note)
+            await ctx.author.send(f"https://cash.app/{payment.split(': ')[-1]}")
             await msg.add_reaction(tick)
             try:
                 reaction, ctx.author = await self.bot.wait_for('reaction_add', timeout=1800.0, check=check)
