@@ -138,7 +138,9 @@ class app(commands.Cog):
     @commands.cooldown(rate, per, t)
     @commands.command(ignore_extra=False)
     async def donate(self, ctx):
+        await ctx.message.delete()
         await ctx.channel.send(f'{ctx.author.mention} Please check dms!')
+
         one  = '1️⃣'
         two = '2️⃣'
         nay = '❌'
@@ -170,6 +172,7 @@ class app(commands.Cog):
         else:
             if str(reaction.emoji) == one:
                 payment = self.ca
+                qr = f"https://cash.app/qr/{payment}?size=288&margin=0"
             elif str(reaction.emoji) == two: 
                 payment = self.vm
             else:
