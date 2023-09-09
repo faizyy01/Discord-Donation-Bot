@@ -116,7 +116,7 @@ class app(commands.Cog):
             logger.debug(f"make_token: t = {t}")
             token_string = f"{member.id}-{t}"
             logger.debug(f"make_token: token_string = {token_string}")
-            transaction_token = hsh(token_string.encode('utf-8')).hexdigest()
+            transaction_token = hsh(token_string.encode('utf-8')).hexdigest()[:50]
             logger.debug(f"make_token: token = {transaction_token}")
             token_dir = Path('token_files')
             token_file = Path(token_dir, "tokens.json")
@@ -135,7 +135,8 @@ class app(commands.Cog):
             tokens.update(info)
             with open(token_file, 'w') as f:
                 json.dump(tokens,f, indent=6)
-            await member.send(f"If you are ask for a transaction ID please provide ID: {transaction_token}\n\n")
+            await member.send("Below is your Transaciton ID")
+            await member.send(transaction_token)
             logger.debug(f"make_token: token sent to user.")
         except Exception as e:
             logger.critical(f"There was an error generating and sending the transaction ID. The exception is below.\n\n{e}")
@@ -243,12 +244,15 @@ class app(commands.Cog):
             jshelper.makeopen(ctx.author.id)
             
             embed = discord.Embed(title=f'Payment via {payment}',color=0xf50000)
-            embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}\nMake sure you send the exact amount with the NOTE.",
-                            value=f"This page will timeout in 30 mins.\nClick {tick} once you have sent the payment.")
+            # embed.add_field(name=f"Price: ${price} \n{payment}\nNote: {note}\nMake sure you send the exact amount with the NOTE.",
+            #                 value=f"This page will timeout in 30 mins.\nClick {tick} once you have sent the payment.")
+            embed.add_field(
+                name=f"Price: ${price} \n{payment}\nNote: Your Transaction ID \nMake sure you send the exact amount with the Transaction ID in the NOTE or For field.",
+                value=f"This page will timeout in 30 mins.\nClick {tick} once you have sent the payment.")
             msg = await ctx.author.send(embed=embed)
-            await ctx.author.send("Here is an example of how to fill out the cashapp form.", file=discord.File('Screenshots/example_cashapp.jpg'))
+            # await ctx.author.send("Here is an example of how to fill out the cashapp form.", file=discord.File('Screenshots/example_cashapp.jpg'))
             await ctx.author.send("Below is the note so you can copy and paste:")
-            await ctx.author.send(f"Note: {note}\n\n")
+            # await ctx.author.send(f"Note: {note}\n\n")
             await self.make_token(ctx.author)
             await ctx.author.send(f"https://cash.app/{payment.split(': ')[-1]}")
             await msg.add_reaction(tick)
