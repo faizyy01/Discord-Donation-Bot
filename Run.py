@@ -83,5 +83,7 @@ async def load_cogs():
         logger.debug('App Cog loaded')
     except Exception as e:
         logger.critical(f'There was an error loading the cogs. Below is the exception: \n\n {e} \n\n________________________')
-asyncio.run(load_cogs())
-bot.run(TOKEN)
+
+if __name__ == "__main__":
+    asyncio.run(load_cogs())
+    bot.run(TOKEN)
