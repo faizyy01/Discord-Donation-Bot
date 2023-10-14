@@ -1,11 +1,12 @@
+
 {
-    "token": "",
-    "role": "",
+    "token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "role": "donator",
     "Price": 10,
-    "cashapp": "",
-    "venmo": "",
+    "cashapp": "test",
+    "venmo": "test",
     "note":"1a001-",
-    "user":"",
-    "password":"",
-    "imap_url":""
+    "user":"test@gmail.com",
+    "password":"vaadsgagcqlgzsox",
+    "imap_url":"imap.gmail.com"
 }

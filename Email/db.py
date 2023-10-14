@@ -1,5 +1,14 @@
 import sqlite3
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.CRITICAL)
+log_formatter = logging.Formatter('%(levelname)s: %(asctime)s - %(message)s')
+log_file_handler = logging.FileHandler(filename=f'{__name__}.log',mode='a')
+log_file_handler.setFormatter(log_formatter)
+logger.addHandler(log_file_handler)
+
 
 DB_URL = os.getcwd() + '/Email/payrecs.db'
 
@@ -8,9 +17,9 @@ def create_connection(db_file):
     conn = None
     try:
         conn = sqlite3.connect(db_file)
-        print("Connected to db")
-    except Error as e:
-        print("error in connecting to db")
+        logger.debug('Connected to db')
+    except Exception as e:
+        logger.error(f'There was an error connecting to the database below is the exception: \n\n {e}\n\n__________________________________')
     finally:
         if conn:
             return conn
